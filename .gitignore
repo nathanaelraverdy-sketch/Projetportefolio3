@@ -1,0 +1,15 @@
+node_modules
+dist
+tools/*.png
+tools/*.blend
+tools/*.blend1
+tools/projects_preview.json
+.DS_Store
+sauvegardes
+_to_delete
+tools/emplacements*.json
+
+# éditeur et sources de maquette (les versions web sont dans public/)
+.idea/
+Images/
+*.log

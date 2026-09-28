@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ville des projets</title>
+  <link rel="preload" href="/fonts/ArgestaDisplay-Regular.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="/fonts/Urbanist-Variable.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <script>/* le thème de la page d'accueil (clair / sombre), avant tout affichage : choix enregistré, sinon celui de l'ordinateur */ (function () { var m = "auto"; try { m = localStorage.getItem("theme") || "auto"; } catch (e) {} var sombre = m === "sombre" || (m === "auto" && matchMedia("(prefers-color-scheme: dark)").matches); document.documentElement.dataset.theme = sombre ? "sombre" : "clair"; document.documentElement.dataset.themeMode = m; })();</script>
+  <script>/* thème de l'écran d'accueil selon l'heure, avant tout affichage : clair le jour, sombre le soir et la nuit */ (function () { var h = new Date().getHours() + new Date().getMinutes() / 60; if (h < 6.5 || h >= 19) document.documentElement.classList.add("sombre"); })();</script>
+  <style>/* ═════ écran de chargement : une barre qui se remplit et un pourcentage en caractères de console, aux couleurs de l'écran d'accueil
+     (dans la page elle-même : il s'affiche tout de suite) ═════ */
+    html,body{margin:0;background:#EFF6F8}
+    html.sombre,html.sombre body{background:#2A2222}
+    .chargement{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:#EFF6F8;color:#2A2222;transition:opacity .6s ease .1s}
+    html.sombre .chargement{background:#2A2222;color:#EFF6F8}
+    .ch-bloc{width:min(320px,70vw);font:500 12px/1 "IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase}
+    .ch-ligne{display:flex;justify-content:space-between;margin-bottom:10px}
+    .ch-ligne span:first-child{opacity:.55}
+    .ch-ligne span:first-child::after{content:"_";animation:ch-curseur 1s steps(1) infinite}
+    .ch-barre{height:2px;background:color-mix(in srgb,currentColor 14%,transparent);overflow:hidden}
+    .ch-barre i{display:block;height:100%;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.3,.7,.3,1);will-change:transform}
+    @keyframes ch-curseur{50%{opacity:0}}
+    .chargement.fini,.chargement.attente{opacity:0;pointer-events:none}
+    @media (prefers-reduced-motion:reduce){.ch-barre i{transition:none}.ch-ligne span:first-child::after{animation:none}}
+  </style>
+</head>
+<body>
+<div class="chargement" id="chargement" role="progressbar" aria-label="Chargement de la ville" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+  <div class="ch-bloc"><div class="ch-ligne"><span>Loading</span><span id="chPc">000%</span></div><div class="ch-barre"><i id="chBarre"></i></div></div>
+</div>
+<script>/* le pourcentage et la barre suivent l'avancement réel de la construction de la ville (window.__charge, appelé par la ville) */
+(function () {
+  var box = document.getElementById("chargement"), pc = document.getElementById("chPc"), barre = document.getElementById("chBarre"), fini = false;
+  if (/vitrine/.test(location.hash)) { box.remove(); return; }            // l'aperçu de l'admin n'en a pas besoin
+  var direct = false; try { direct = !!sessionStorage.getItem("sansIntro"); } catch (e) {}
+  if (!direct) box.classList.add("attente");                              // la page d'accueil s'affiche tout de suite : la ville se charge derrière, sans barre
+  window.__montrerChargement = function () { box.classList.remove("attente"); };
+  window.__villePrete = false;
+  function afficher(k) {
+    var n = Math.max(0, Math.min(100, Math.round(k * 100)));
+    pc.textContent = ("00" + n).slice(-3) + "%"; barre.style.transform = "scaleX(" + (n / 100) + ")"; box.setAttribute("aria-valuenow", n);
+  }
+  requestAnimationFrame(function () { afficher(.03); });
+  window.__charge = function (k) {
+
+    // k de 0 à 1
+    if (fini) return;
+    afficher(Math.min(1, k));
+    if (k >= 1) {
+      fini = true; window.__villePrete = true; dispatchEvent(new Event("ville-prete"));
+      if (document.hidden) { box.remove(); return; }
+      setTimeout(function () { box.classList.add("fini"); setTimeout(function () { box.remove(); }, 800); }, 450);   // le temps que la barre arrive au bout
+    }
+  };
+})();</script>
+<div id="nojs" style="position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;background:#efe9dd;font:17px/1.55 -apple-system,system-ui,sans-serif;color:#1d2a2c;padding:24px">
+  <div style="max-width:560px;background:#fbf8f2;border:1px solid rgba(29,42,44,.13);border-radius:18px;padding:28px 30px">
+    <h2 style="margin:0 0 10px;font-size:22px">Cette page s’ouvre autrement</h2>
+    <p style="margin:0 0 12px">La ville a besoin d’un petit serveur qui tourne sur l’ordinateur. Ouverte directement (double-clic sur le fichier, ou « ouvrir dans le navigateur » de WebStorm), elle reste vide.</p>
+    <p style="margin:0 0 6px"><b>Pour l’ouvrir :</b></p>
+    <ul style="margin:0;padding-left:20px"><li>double-clique sur <b>« Ouvrir l’admin.command »</b> dans le dossier du projet,</li><li>ou, dans WebStorm, ouvre le fichier <b>package.json</b> et clique sur le petit ▶ vert à côté de <b>« admin »</b> (ou de <b>« dev »</b> pour la ville).</li></ul>
+  </div>
+</div>
+<script>/* ouverte sans serveur (fichier direct, ou aperçu de WebStorm) : si le serveur du site tourne déjà, on y va tout seul ; sinon on explique comment faire */
+if (location.protocol === "file:" || location.port === "63342") {
+  document.getElementById("nojs").style.display = "flex";
+  [5180].forEach(function (port) {   // le port de CE projet uniquement (Projetcarte utilise 5173)
+    fetch("http://localhost:" + port + "/__admin/etat", { mode: "no-cors" }).then(function () { location.href = "http://localhost:" + port + "/"; }).catch(function () {});
+  });
+}</script>
+<div id="stage" aria-label="Ville interactive des projets"><canvas id="webgl"></canvas></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="labels" id="labels"></div>
+<div class="loading" id="loading" hidden></div>
+<div class="toast" id="toast" role="status"></div>
+
+<!-- ═════ PAGE D'ACCUEIL (src/accueil.js) : la vitre d'entrée, puis la page qui défile ; la carte est derrière ═════ -->
+<div class="ac-vitre" id="acVitre" aria-label="Welcome">
+  <div class="ac-hero">
+    <h1 class="ac-titre" data-r="mots">Finding <br class="m-br">the extraordinary<br>in the ordinary</h1>
+    <p class="ac-texte" data-r="mots" style="--d:450ms">We design and build web &amp; mobile products, from interface to database.</p>
+    <div class="deco m-cache " data-r="deco" data-prof=".25" style="left:21%;top:52%;width:64px;--d:700ms"><span><img src="/accueil/etoile.webp" alt="" style="--r:14deg;--f:6s" loading="lazy" decoding="async"></span></div>
+    <div class="deco m-h1" data-r="deco" data-prof=".5" style="right:14%;top:66%;width:120px;--d:900ms"><span><img src="/accueil/cone.webp" alt="" style="--r:10deg;--f:8s" loading="lazy" decoding="async"></span></div>
+    <div class="deco m-seul m-h2" data-r="deco" data-prof=".3" style="--d:1100ms"><span><img src="/accueil/ressort.webp" alt="" style="--r:12deg;--f:7s" loading="lazy" decoding="async"></span></div>
+    <div class="deco m-cache" data-r="deco" data-prof=".15" style="left:3%;top:88%;width:58px;--d:1100ms"><span><img src="/accueil/etoile.webp" alt="" style="--r:18deg;--f:5s" loading="lazy" decoding="async"></span></div>
+  </div>
+  <button class="ac-press-btn" id="acPressBtn" type="button" aria-label="Press and hold to enter"></button>
+  <p class="ac-indice" aria-hidden="true">Press and hold</p>
+</div>
+<div class="ac-curseur" id="acCurseur" aria-hidden="true"><span class="press">Press</span><i class="point"></i><svg viewBox="0 0 80 80"><circle class="fond" cx="40" cy="40" r="34"/><circle class="plein" id="acAnneau" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg></div>
+
+<button class="ibtn ac-theme" id="themeBtn" type="button" data-mode="auto" aria-label="Theme: follows your computer" title="Theme">
+  <svg viewBox="0 0 24 24" aria-hidden="true" class="i-auto"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.2V12l3.2 2.1" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <svg viewBox="0 0 24 24" aria-hidden="true" class="i-clair"><circle cx="12" cy="12" r="3.9"/><g stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.35 5.35l1.55 1.55M17.1 17.1l1.55 1.55M5.35 18.65l1.55-1.55M17.1 6.9l1.55-1.55"/></g></svg>
+  <svg viewBox="0 0 24 24" aria-hidden="true" class="i-sombre"><path d="M19.2 14.6A7.6 7.6 0 0 1 9.4 4.8a7.6 7.6 0 1 0 9.8 9.8Z"/></svg>
+</button>
+<canvas class="ac-nuages" id="acNuages" aria-hidden="true"></canvas>
+<main class="accueil" id="accueil">
+  <section class="ac-section ac-adaptive" id="acAdaptive">
+    <div class="ac-bloc">
+      <h2 class="ac-titre" data-r="mots">Adaptive design<br>&amp; solutions</h2>
+      <p class="ac-texte" data-r="mots" style="--d:250ms">Great projects rarely start out great. They start as a vague idea, a half-finished draft, or a "we're not sure yet." That's exactly where we come in. Together, we explore what your project could become, challenge what doesn't work, and adapt every detail until the ordinary turns into something remarkable.</p>
+    </div>
+    <div class="ac-phone ac-modele" id="acPhone" data-r="modele" aria-label="iPhone"></div>
+    <div class="ac-mac ac-modele" id="acMac" data-r="modele" aria-label="Macintosh"></div>
+    <div class="deco m-a1" data-r="deco" data-prof=".3" style="right:30%;top:-2vh;width:60px;--d:300ms"><span><img src="/accueil/etoile.webp" alt="" style="--r:16deg;--f:6s" loading="lazy" decoding="async"></span></div>
+    <div class="deco m-a2" data-r="deco" data-prof=".35" style="left:11%;top:calc(4vh + min(470px,34vw) + 250px);width:120px;--d:200ms"><span><img src="/accueil/cube.webp" alt="" style="--r:12deg;--f:9s" loading="lazy" decoding="async"></span></div>
+    <div class="deco m-a3" data-r="deco" data-prof=".2" style="left:55%;top:30vh;width:60px;--d:500ms"><span><img src="/accueil/etoile.webp" alt="" style="--r:20deg;--f:5s" loading="lazy" decoding="async"></span></div>
+    <div class="deco m-a4" data-r="deco" data-prof=".45" style="right:2%;top:58vh;width:62px;--d:700ms"><span><img src="/accueil/etoile.webp" alt="" style="--r:14deg;--f:7s" loading="lazy" decoding="async"></span></div>
+  </section>
+
+  <section class="ac-section ac-outils" id="acOutils">
+    <h2 class="ac-titre" data-r="mots">Using or creating tools <br>adapted for your project</h2>
+    <div class="deco m-o1" data-r="deco" data-prof=".4" style="left:83.9%;top:calc(14vh + 9.6vw);width:clamp(48px,7.2vw,110px);--d:200ms"><span><img src="/accueil/asterisque-a.webp" alt="" style="--r:30deg;--f:10s" loading="lazy" decoding="async"></span></div>
+    <div class="deco m-o2" data-r="deco" data-prof=".3" style="left:8.1%;top:calc(14vh + 14.5vw);width:clamp(76px,12vw,180px);--d:300ms"><span><img src="/accueil/noeud.webp" alt="" style="--r:10deg;--f:8s" loading="lazy" decoding="async"></span></div>
+    <div class="ac-cartes" id="acCartes" data-r="cartes" aria-label="Presentation, business logic and data access layers">
+      <div class="ac-carte" data-k="0" style="--forme:url(/accueil/carte-forme.webp)"><div class="flou"></div><img src="/accueil/carte-presentation.webp" alt="Presentation Layer — we make your brand look even better with stunning UI design and seamless user interfaces that captivate your audience from the very first click." loading="lazy"></div>
+      <div class="ac-carte" data-k="1" style="--forme:url(/accueil/carte-forme.webp)"><div class="flou"></div><img src="/accueil/carte-logique.webp" alt="Business Logic Layer — we build the intelligent core of your application, engineering powerful and reliable code to handle your unique business workflows flawlessly." loading="lazy"></div>
+      <div class="ac-carte" data-k="2" style="--forme:url(/accueil/carte-forme.webp)"><div class="flou"></div><img src="/accueil/carte-donnees.webp" alt="Data Access Layer — we secure and organize your digital assets with robust data architecture, ensuring your information is safely stored, fast to retrieve, and ready to scale." loading="lazy"></div>
+    </div>
+    <p class="ac-texte bas" data-r="mots">We build your project step by step, from the ground up. First, we structure your data so it's reliable and ready to grow. Then we design the logic that makes everything work behind the scenes. Finally, we craft the interface your users will interact with. Each layer is thought through with the others, so the result is solid, coherent, and easy to evolve.</p>
+    <div class="deco m-o3" data-r="deco" data-prof=".5" style="left:2.6%;top:calc(14vh + 53.8vw);width:clamp(50px,7.5vw,114px);--d:200ms"><span><img src="/accueil/fleur-a.webp" alt="" style="--r:25deg;--f:9s" loading="lazy" decoding="async"></span></div>
+    <div class="deco m-o4" data-r="deco" data-prof=".25" style="left:21.7%;top:calc(14vh + 64.7vw);width:clamp(64px,10vw,150px);--d:400ms"><span><img src="/accueil/fleur-b.webp" alt="" style="--r:35deg;--f:12s" loading="lazy" decoding="async"></span></div>
+  </section>
+
+  <section class="ac-section ac-about" id="acAbout">
+    <div class="ac-globe" id="acGlobe" aria-label="Globe centered on Brussels, Belgium"><span class="bxl" id="acBxl">Brussels · Belgium</span></div>
+    <h2 class="ac-titre" data-r="mots">About us</h2>
+    <p class="ac-texte sous" data-r="mots" style="--d:300ms">We believe great digital products should be within everyone's reach.</p>
+    <div class="deco m-b1" data-r="deco" data-prof=".35" style="left:52%;top:10vh;width:100px;--d:300ms;z-index:0"><span><img src="/accueil/fleur-c.webp" alt="" style="--r:25deg;--f:11s" loading="lazy" decoding="async"></span></div>
+    <div class="deco m-b2" data-r="deco" data-prof=".3" style="left:1%;top:44vh;width:66px;--d:500ms"><span><img src="/accueil/trefle.webp" alt="" style="--r:20deg;--f:8s" loading="lazy" decoding="async"></span></div>
+    <p class="ac-texte long" data-r="mots">We're a small team of designers and developers based in Brussels. We started [company name] because we believe good digital tools shouldn't be reserved for big companies. Every project gets our full attention, from the first call to long after launch.</p>
+    <div class="ac-chiffres" id="acChiffres">
+      <div class="ac-chiffre" data-r="fondu"><p>Project finished</p><b data-n="1" id="acNbProjets">1</b></div>
+      <div class="ac-chiffre" data-r="fondu" style="--d:120ms"><p>Since</p><b data-n="2026">2026</b></div>
+    </div>
+    <div class="deco m-b3" data-r="deco" data-prof=".4" style="left:38%;top:112vh;width:84px;--d:300ms"><span><img src="/accueil/asterisque-b.webp" alt="" style="--r:30deg;--f:10s" loading="lazy" decoding="async"></span></div>
+  </section>
+
+  <section class="ac-section ac-roue" id="acRoue">
+    <div class="zone" id="acZone" data-r="fondu">
+      <button class="ac-vers-carte" id="acVersCarte" type="button">Explore the projects map <span class="fl" aria-hidden="true">→</span></button>
+      <p class="ac-encore" aria-hidden="true">or keep scrolling</p>
+    </div>
+  </section>
+</main>
+<script type="module" src="/src/accueil.js"></script>
+
+<!-- barre de navigation (les liens seront branchés plus tard) -->
+<nav class="navbar" aria-label="Navigation principale">
+  <a href="#about">About</a>
+  <a href="#service">Service</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<div class="hud">
+  <button class="ibtn" id="zoomOut" type="button" aria-label="Dézoomer" title="Dézoomer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <button class="ibtn" id="zoomIn" type="button" aria-label="Zoomer" title="Zoomer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <button class="ibtn" id="timeBtn" type="button" data-mode="auto" aria-label="Lumière : heure réelle. Cliquer pour passer au matin" title="Heure réelle">
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="i-auto"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.2V12l3.2 2.1" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="i-morning"><path d="M7.6 16.5a4.4 4.4 0 0 1 8.8 0Z"/><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 19.6h18M12 5.4v2.2M5.3 9.8l1.5 1.5M18.7 9.8l-1.5 1.5M2.8 16.5h2M19.2 16.5h2"/><path d="M9.8 3.9 12 1.9l2.2 2" stroke-linejoin="round"/></g></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="i-day"><circle cx="12" cy="12" r="3.9"/><g stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.35 5.35l1.55 1.55M17.1 17.1l1.55 1.55M5.35 18.65l1.55-1.55M17.1 6.9l1.55-1.55"/></g></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="i-dusk"><path d="M7.6 16.5a4.4 4.4 0 0 1 8.8 0Z"/><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 19.6h18M12 5.4v2.2M5.3 9.8l1.5 1.5M18.7 9.8l-1.5 1.5M2.8 16.5h2M19.2 16.5h2"/><path d="M9.8 1.9 12 3.9l2.2-2" stroke-linejoin="round"/></g></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="i-night"><path d="M19.2 14.6A7.6 7.6 0 0 1 9.4 4.8a7.6 7.6 0 1 0 9.8 9.8Z"/></svg>
+  </button>
+</div>
+
+<article class="card" id="card" aria-hidden="true">
+  <button class="close" id="close" type="button" aria-label="Fermer la fiche">×</button>
+  <div class="hero" id="cHero"><canvas id="heroCv" width="760" height="320"></canvas><span class="statut" id="cStatut" hidden></span><div class="chips" id="cTags"></div></div>
+  <div class="body">
+    <h3 id="cTitle"></h3>
+    <div class="prog" id="cProg" hidden><div class="prog-haut"><span>Progress</span><b id="cProgVal">0 %</b></div><div class="prog-rail"><i id="cProgBar"></i></div></div>
+    <button type="button" class="more" id="more">View more</button>
+    <div class="nav">
+      <button type="button" id="prev">← Previous</button>
+      <button type="button" id="next">Next →</button>
+    </div>
+  </div>
+</article>
+
+<!-- le projet en détail, par-dessus la ville -->
+<div class="detail" id="detail" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Le projet en détail">
+  <div class="detail-carte" id="detailCarte">
+    <div class="detail-defil" id="detailDefil">
+    <button class="ibtn detail-fermer" id="detailFermer" type="button" aria-label="Fermer">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <div class="detail-contenu" id="detailContenu"></div>
+    </div>
+  </div>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

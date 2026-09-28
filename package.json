@@ -1,0 +1,19 @@
+{
+  "name": "projetportefolio3",
+  "version": "0.2.0",
+  "description": "Ville des projets en image pré-rendue (façon why.zero.university) — Three.js + Vite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --open",
+    "admin": "vite --open /admin.html",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  }
+}

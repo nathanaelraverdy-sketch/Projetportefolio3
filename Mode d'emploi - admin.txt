@@ -1,0 +1,29 @@
+LA VILLE DES PROJETS (v3, ville en image) — MODE D'EMPLOI DE LA PAGE ADMIN
+======================================================
+
+1. OUVRIR L'ADMIN
+   Double-clique sur le fichier « Ouvrir l'admin.command » (dans ce dossier).
+   Une fenêtre noire (le Terminal) s'ouvre, puis la page admin apparaît dans ton navigateur.
+   Laisse la fenêtre noire ouverte pendant que tu travailles.
+   → La toute première fois, l'installation prend environ une minute.
+   → Si le Mac refuse d'ouvrir le fichier : clic droit sur le fichier > Ouvrir > Ouvrir.
+
+2. MODIFIER LES PROJETS
+   - « + Nouveau projet » pour en ajouter un.
+   - Clique sur un projet dans la liste de gauche pour le modifier.
+   - Choisis son emplacement (un bâtiment numéroté de la ville) dans la liste ou en cliquant
+     sur une pastille dans l'aperçu, puis sa couleur. Deux projets ne peuvent pas partager un bâtiment :
+     si tu prends celui d'un autre projet, ils échangent leur place.
+   - Les flèches ▲ ▼ changent l'ordre des fiches sur le site.
+   - « Supprimer ce projet » tout en bas (il demande une confirmation).
+
+3. ENREGISTRER
+   Appuie sur « Enregistrer » (ou Cmd + S). Le bouton « Voir le site » montre la ville à jour.
+   Une copie de l'ancienne version est gardée à chaque fois dans le dossier « sauvegardes ».
+
+4. METTRE EN LIGNE
+   Le bouton « Mettre en ligne » envoie les projets enregistrés vers le site en ligne.
+   (Il faut d'abord que le site soit relié à un hébergement en ligne : c'est à faire une seule fois.)
+
+5. QUAND TU AS FINI
+   Ferme la fenêtre noire du Terminal.

@@ -1,0 +1,204 @@
+/* ═════════════ Page d'accueil (maquette « Wireframe 6 ») ═════════════
+   Tout apparaît en mouvement : les titres montent mot à mot depuis le bas, les objets tournent en entrant puis flottent,
+   les cartes des couches se posent l'une après l'autre. Une seule courbe pour presque tout : une « expo out » douce. */
+:root{ --ac-ease:cubic-bezier(.16,1,.3,1); --ac-ressort:cubic-bezier(.34,1.56,.64,1); --ac-fond:#eff6f8; --ac-noir:#2a2222; --ac-zone:#dfe7ea; --ac-etiq:rgba(239,246,248,.9); }
+/* le mode sombre : les couleurs du site, inversées */
+html[data-theme="sombre"]{ --ac-fond:#231d1d; --ac-noir:#eff6f8; --ac-zone:#2f2828; --ac-etiq:rgba(35,29,29,.88); }
+.accueil,.ac-vitre{transition:background-color .7s var(--ac-ease),color .7s var(--ac-ease)}
+
+.accueil{position:fixed;inset:0;z-index:50;overflow-x:hidden;overflow-y:auto;background:var(--ac-fond);color:var(--ac-noir);
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;transition:opacity .9s var(--ac-ease),transform 1.1s var(--ac-ease),visibility 0s linear 0s}
+.accueil.part.sec{transition:none}   /* (sous les nuages : elle disparaît d'un coup) */
+.accueil.part{opacity:0;transform:translateY(-4vh) scale(.985);visibility:hidden;pointer-events:none;transition:opacity .9s var(--ac-ease),transform 1.1s var(--ac-ease),visibility 0s linear 1.1s}
+.accueil[hidden]{display:none}
+.accueil *{box-sizing:border-box}
+.ac-section{position:relative;width:100%;max-width:1600px;margin:0 auto}
+
+/* ─── les titres et les textes : révélés mot à mot, depuis le bas ─── */
+.ac-titre{font-family:var(--serif);font-weight:400;letter-spacing:-.01em;line-height:.95;margin:0}
+.ac-texte{font:400 clamp(15px,1.25vw,18px)/1.45 var(--sans);margin:0}
+.mot{display:inline-block;overflow:hidden;vertical-align:top;padding:.08em .02em .12em;margin:-.08em -.02em -.12em}
+.mot>i{display:inline-block;font-style:normal;transform:translateY(112%) rotate(7deg);transform-origin:0 100%;transition:transform 1.25s var(--ac-ease);transition-delay:calc(var(--i,0) * 55ms + var(--d,0ms))}
+.ac-texte .mot>i{transform:translateY(105%);transition-duration:1s;transition-delay:calc(var(--i,0) * 9ms + var(--d,0ms))}
+.vu .mot>i,.vu.mot>i{transform:none}
+[data-r="fondu"]{opacity:0;transform:translateY(40px);filter:blur(6px);transition:opacity 1.1s var(--ac-ease),transform 1.3s var(--ac-ease),filter 1.1s var(--ac-ease);transition-delay:var(--d,0ms)}
+[data-r="fondu"].vu{opacity:1;transform:none;filter:none}
+
+/* ─── les objets décoratifs : ils entrent en tournant, puis flottent (et suivent un peu le défilement et la souris) ─── */
+.deco{position:absolute;pointer-events:none;will-change:transform;z-index:1}
+.deco>span{display:block;opacity:0;transform:scale(.35) rotate(-70deg);transition:opacity .9s var(--ac-ease),transform 1.5s var(--ac-ressort);transition-delay:var(--d,0ms)}
+.deco.vu>span{opacity:1;transform:none}
+.deco img{display:block;width:100%;height:auto;animation:ac-flotte var(--f,7s) ease-in-out infinite alternate;animation-delay:var(--fd,0s);user-select:none;-webkit-user-drag:none}
+@keyframes ac-flotte{0%{transform:translateY(-6px) rotate(calc(var(--r,8deg) * -1))}100%{transform:translateY(8px) rotate(var(--r,8deg))}}
+
+/* ─── la vitre d'entrée : le premier titre ; on appuie longtemps, elle se brise ─── */
+.ac-vitre{position:fixed;inset:0;z-index:60;background:var(--ac-fond);color:var(--ac-noir);cursor:none;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.ac-vitre .ac-hero{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 24px 8vh}
+.ac-hero .ac-titre{font-size:clamp(46px,6.9vw,112px);line-height:.92}
+.ac-hero .ac-texte{margin-top:18px;font-size:clamp(15px,1.45vw,21px)}
+.ac-curseur{position:fixed;left:0;top:0;z-index:62;pointer-events:none;width:0;height:0}
+.ac-curseur .press{position:absolute;left:0;top:-58px;transform:translateX(-50%);font:500 12px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--ac-noir);white-space:nowrap;transition:opacity .35s,transform .5s var(--ac-ease)}
+.ac-curseur .point{position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:var(--ac-noir);transition:transform .4s var(--ac-ease)}
+.ac-curseur svg{position:absolute;left:-40px;top:-40px;width:80px;height:80px;transform:rotate(-90deg) scale(.6);opacity:0;transition:opacity .3s,transform .5s var(--ac-ease);overflow:visible}
+.ac-curseur circle{fill:none;stroke-width:1.5}
+.ac-curseur .fond{stroke:rgba(42,34,34,.14)}
+.ac-curseur .plein{stroke:var(--ac-noir);stroke-linecap:round}
+.ac-curseur.appui svg{opacity:1;transform:rotate(-90deg) scale(1)}
+.ac-curseur.appui .point{transform:scale(.5)}
+.ac-curseur.appui .press{opacity:.35;transform:translateX(-50%) translateY(-6px)}
+.ac-curseur.cache{opacity:0}
+.ac-vitre .ac-press-btn{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:none;border:0;background:none}
+.ac-indice{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 34px);text-align:center;font:500 11px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;opacity:0;transition:opacity 1s var(--ac-ease) 1.6s}
+.ac-vitre.pret .ac-indice{opacity:.45}
+@media (hover:none){.ac-vitre{cursor:auto}.ac-curseur .press,.ac-curseur .point{display:none}}
+/* la casse : une toile par-dessus tout, le temps que les éclats tombent */
+.ac-casse{position:fixed;inset:0;width:100%;height:100%;z-index:63;pointer-events:none}
+
+/* ─── 1. Adaptive design & solutions : l'iPhone et le Macintosh ─── */
+.ac-adaptive{min-height:150vh;padding:calc(4vh + min(470px,34vw)) 0 10vh}
+.ac-adaptive .ac-bloc{position:relative;margin-left:22.5%;width:min(640px,46vw);z-index:2}
+.ac-adaptive .ac-texte{max-width:470px}
+.ac-adaptive .ac-titre{font-size:clamp(44px,5.4vw,88px)}
+.ac-adaptive .ac-texte{margin-top:18px}
+.ac-phone{position:absolute;right:4%;top:6vh;width:min(420px,32vw);height:min(640px,48vw);z-index:2}
+.ac-mac{position:absolute;left:0;top:4vh;width:min(420px,30vw);height:min(460px,33vw);z-index:2}
+.ecran-cv{display:block;width:100%;height:100%}
+/* ils apparaissent de dos, puis se retournent pour montrer leur écran (la rotation est dans src/ecrans.js) */
+.ac-modele{opacity:0;transition:opacity .35s var(--ac-ease)}
+.ac-modele.vu{opacity:1}
+
+/* ─── 2. Using or creating tools : les trois couches ─── */
+.ac-outils{padding:14vh 0 16vh}
+.ac-outils .ac-titre{margin-left:4.7%;font-size:clamp(40px,5vw,80px);line-height:1}
+.ac-cartes{position:relative;margin:4.5vw 0 0 17%;width:60.5vw;max-width:980px;aspect-ratio:1058/1002;z-index:2}   /* comme la maquette : 17 % à gauche, 60 % de large, décalage de 13,7 % de la largeur */
+.ac-carte{position:absolute;left:0;width:100%;aspect-ratio:1058/712;transition:transform 1.1s var(--ac-ressort),opacity .8s var(--ac-ease);transform:translateY(var(--y,0px))}
+.ac-carte img{transition:filter .6s var(--ac-ease),opacity .6s var(--ac-ease)}   /* (jamais de filtre ni d'opacité sur la carte elle-même : son flou ne verrait plus les cartes dessous) */
+.ac-carte .flou{position:absolute;inset:0;-webkit-backdrop-filter:blur(14px) saturate(1.15);backdrop-filter:blur(14px) saturate(1.15);-webkit-mask:var(--forme) center/100% 100% no-repeat;mask:var(--forme) center/100% 100% no-repeat}
+.ac-carte img{position:relative;display:block;width:100%;height:auto;filter:drop-shadow(0 30px 40px rgba(42,34,34,.10))}
+.ac-carte[data-k="0"]{top:0;z-index:3}
+.ac-carte[data-k="1"]{top:14.5%;z-index:2}
+.ac-carte[data-k="2"]{top:29%;z-index:1}
+.ac-cartes .ac-carte{opacity:0;--y:160px}
+.ac-cartes.vu .ac-carte{opacity:1;--y:0px}
+.ac-cartes.vu .ac-carte[data-k="2"]{transition-delay:.05s}
+.ac-cartes.vu .ac-carte[data-k="1"]{transition-delay:.22s}
+.ac-cartes.vu .ac-carte[data-k="0"]{transition-delay:.39s}
+.ac-cartes.pret .ac-carte{transition-delay:0s!important}
+.ac-cartes.choix .ac-carte:not(.haut) img{opacity:.6;filter:saturate(.75) drop-shadow(0 30px 40px rgba(42,34,34,.06))}
+.ac-cartes.choix .ac-carte.haut img{filter:drop-shadow(0 46px 50px rgba(42,34,34,.16))}
+.ac-outils .ac-texte.bas{position:relative;margin:-7.5vw 0 0 54%;width:min(620px,43vw);font-size:clamp(13px,1.35vw,20px);line-height:1.3;text-align:left;z-index:2}
+
+/* ─── 3. About us : la Terre ─── */
+.ac-about{min-height:130vh;padding:16vh 0 6vh;overflow:visible}
+.ac-about .ac-titre{margin-left:4.5%;font-size:clamp(48px,6.2vw,100px)}
+.ac-about .sous{margin:10px 0 0 4.5%}
+.ac-about .ac-texte.long{margin:30vh 0 0 4.5%;width:min(440px,40vw)}
+.ac-chiffres{display:flex;gap:clamp(40px,8vw,120px);margin:6vh 0 0 4.5%;position:relative;z-index:2}
+.ac-chiffre{text-align:center}
+.ac-chiffre p{margin:0;font:400 clamp(14px,1.2vw,17px)/1 var(--serif)}
+.ac-chiffre b{display:flex;justify-content:center;font:400 clamp(52px,5.6vw,86px)/1 var(--serif);margin-top:10px;overflow:hidden;height:1.02em}
+.ac-chiffre b span{display:block;transition:transform 1.8s var(--ac-ease);transition-delay:calc(var(--i,0) * 120ms + 200ms)}
+.ac-chiffre b span i{display:block;font-style:normal;height:1.02em}
+.ac-globe{position:absolute;right:-17%;top:4vh;width:min(96vw,1180px);aspect-ratio:1;z-index:1;touch-action:pan-y;cursor:grab}
+.ac-globe.tire{cursor:grabbing}
+.ac-globe .globe-cv{display:block;width:100%;height:100%}
+.ac-globe .bxl{position:absolute;left:0;top:0;margin:-40px 0 0 16px;pointer-events:none;white-space:nowrap;font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid;padding:7px 9px;border-radius:4px;opacity:0;transition:opacity .5s ease}
+
+/* ─── 4. La carte des projets (la roue viendra plus tard) ─── */
+.ac-roue{padding:10vh 4.5% 14vh}
+.ac-roue .zone{position:relative;border-radius:28px;min-height:62vh;display:grid;place-items:center;overflow:hidden}
+.ac-roue .zone::before{content:"";position:absolute;inset:-40%;background:radial-gradient(closest-side,rgba(255,255,255,.7),transparent 70%);transform:translate(var(--mx,0),var(--my,0));transition:transform 1.2s var(--ac-ease)}
+.ac-vers-carte{position:relative;display:inline-flex;align-items:center;gap:14px;font:400 clamp(20px,2vw,28px)/1 var(--sans);border:0;border-radius:999px;padding:24px 34px;cursor:pointer;transition:transform .6s var(--ac-ressort),box-shadow .6s var(--ac-ease)}
+.ac-vers-carte:hover{box-shadow:0 20px 50px rgba(42,34,34,.25)}
+.ac-vers-carte .fl{display:inline-block;transition:transform .6s var(--ac-ressort)}
+.ac-vers-carte:hover .fl{transform:translateX(6px) rotate(-45deg)}
+.ac-vers-carte:focus-visible{outline:2px solid var(--ac-noir);outline-offset:4px}
+
+/* la page d'accueil ouverte : la barre de navigation reste visible, les boutons de la carte disparaissent */
+body.accueil-ouvert .navbar{opacity:1!important;pointer-events:auto!important;z-index:55}
+body.accueil-ouvert.vitre-ouverte .navbar{opacity:0!important;pointer-events:none!important}
+body.accueil-ouvert .hud,body.accueil-ouvert .labels,body.accueil-ouvert .card{opacity:0!important;pointer-events:none!important}
+
+/* ─── téléphone (maquette mobile, 402 px de large : 1 px = 0,249vw) ─── */
+.m-br,.deco.m-seul{display:none}
+@media (max-width:760px){
+  .m-br{display:inline}.deco.m-seul{display:block}
+  .deco.m-cache{display:none}
+  .ac-bloc,.ac-texte,.ac-titre{position:relative;z-index:2}
+  .deco{width:var(--mw)!important;left:var(--ml)!important;top:var(--mt)!important;right:auto!important}
+
+  /* la vitre : le titre en haut à gauche, le cône en haut à droite, le ressort dessous */
+  .ac-vitre .ac-hero{justify-content:flex-start;align-items:flex-start;text-align:left;padding:calc(env(safe-area-inset-top,0px) + 22vw) 2.5vw 0}
+  .ac-hero .ac-titre{font-size:9.3vw;line-height:.98}
+  .ac-hero .ac-texte{margin-top:3vw;font-size:4.3vw;line-height:1.35}
+  .m-h1{--mw:19vw;--ml:70vw;--mt:calc(env(safe-area-inset-top,0px) + 17vw)}
+  .m-h2{--mw:18.5vw;--ml:7.5vw;--mt:calc(env(safe-area-inset-top,0px) + 73vw)}
+
+  /* 1. le Macintosh en haut à gauche, le titre, le texte à gauche et l'iPhone penché qui dépasse à droite */
+  .ac-adaptive{min-height:0;height:200vw;padding:63vw 0 0}
+  .ac-adaptive .ac-bloc{margin:0 0 0 5vw;width:auto}
+  .ac-adaptive .ac-titre{font-size:9vw;line-height:.98;max-width:90vw}
+  .ac-adaptive .ac-texte{margin-top:6vw;max-width:64vw;font-size:clamp(13px,3.45vw,16px);line-height:1.5}
+  .ac-mac{position:absolute;left:-3vw;top:4vw;width:56vw;height:58vw}
+  .ac-phone{position:absolute;left:auto;right:-10vw;top:88vw;width:46vw;height:70vw;z-index:1}
+  .m-a1{--mw:12.5vw;--ml:48vw;--mt:19vw}
+  .m-a3{--mw:12.5vw;--ml:74.5vw;--mt:54vw}
+  .m-a4{--mw:13vw;--ml:2vw;--mt:153vw}
+  .m-a2{--mw:18vw;--ml:29vw;--mt:157vw}
+
+  /* 2. les couches */
+  .ac-outils{min-height:0;padding:12vw 5vw 40vw}
+  .ac-outils .ac-titre{margin:0;font-size:9vw;line-height:.98}
+  .ac-outils .ac-titre br{display:none}
+  .ac-cartes{margin:30vw auto 0;width:81vw;aspect-ratio:1058/1516}   /* les couches bien écartées pour lire chaque texte */
+  .ac-carte[data-k="1"]{top:26.5%}.ac-carte[data-k="2"]{top:53%}
+  .ac-outils .ac-texte.bas{position:relative;left:auto;bottom:auto;width:auto;margin:12vw 0 0 .5vw;font-size:clamp(13px,3.6vw,16px);line-height:1.4}
+  .m-o1{--mw:17vw;--ml:79.5vw;--mt:29.5vw}
+  .m-o2{--mw:17.5vw;--ml:1vw;--mt:43vw}
+  .m-o3{--mw:13.5vw;--ml:83.5vw;--mt:calc(100% - 40vw)}
+  .m-o4{--mw:15vw;--ml:2vw;--mt:calc(100% - 33vw)}
+
+  /* 3. About us : la Terre coupée à droite */
+  .ac-about{min-height:0;height:218vw;padding:20vw 0 0}
+  .ac-about .ac-titre{margin-left:6vw;font-size:12vw}
+  .ac-about .sous{margin:2vw 0 0 6vw;max-width:45vw;font-size:clamp(13px,3.5vw,16px);line-height:1.4}
+  .ac-globe{position:absolute;right:auto;left:24vw;top:2vw;width:146vw;margin:0}
+  .ac-about .ac-texte.long{margin:82vw 0 0 6vw;width:89vw;font-size:clamp(13px,3.4vw,16px);line-height:1.35}
+  .ac-chiffres{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:4vw 3vw 0}
+  .ac-chiffre p{font-size:3.6vw}
+  .ac-chiffre b{font-size:15vw;margin-top:5vw}
+  .m-b1{--mw:17.5vw;--ml:61vw;--mt:12vw}
+  .m-b2{--mw:15vw;--ml:5.5vw;--mt:114vw}
+  .m-b3{--mw:16.5vw;--ml:80vw;--mt:192vw}
+
+  /* 4. la roue des projets : un grand bloc bord à bord */
+  .ac-roue{padding:0}
+  .ac-roue .zone{border-radius:0;min-height:165vw}
+}
+@media (prefers-reduced-motion:reduce){
+  .mot>i,[data-r="fondu"],.deco>span,.ac-carte,.ac-chiffre b span{transition-duration:.01s!important;transition-delay:0s!important}
+  .deco img{animation:none}
+}
+
+/* ─── le bouton du thème (en haut à droite) : auto (l'ordinateur) → clair → sombre ─── */
+.ac-theme{position:fixed;top:calc(env(safe-area-inset-top,0px) + 18px);right:20px;z-index:70}
+.ac-theme svg{opacity:0;transform:rotate(-50deg) scale(.6)}
+.ac-theme[data-mode="auto"] .i-auto,.ac-theme[data-mode="clair"] .i-clair,.ac-theme[data-mode="sombre"] .i-sombre{opacity:1;transform:none}
+body:not(.accueil-ouvert) .ac-theme{opacity:0;pointer-events:none}
+html[data-theme="sombre"] .ibtn.ac-theme,html[data-theme="sombre"] body.accueil-ouvert .navbar{color:var(--blanc);background:rgba(42,34,34,.55);border-color:rgba(239,246,248,.16);box-shadow:0 4px 16px rgba(0,0,0,.25)}
+html[data-theme="sombre"] body.accueil-ouvert .navbar a{color:var(--blanc)}
+html[data-theme="sombre"] body.accueil-ouvert .navbar a:hover{background:rgba(239,246,248,.1)}
+html[data-theme="sombre"] .ac-carte .flou{background:rgba(239,246,248,.74)}   /* sur fond sombre, les couches restent claires et lisibles */
+html[data-theme="sombre"] .ac-carte img{filter:drop-shadow(0 30px 40px rgba(0,0,0,.35))}
+html[data-theme="sombre"] .ac-curseur .fond{stroke:rgba(239,246,248,.18)}
+.ac-roue .zone{background:var(--ac-zone)}
+html[data-theme="sombre"] .ac-roue .zone::before{background:radial-gradient(closest-side,rgba(239,246,248,.08),transparent 70%)}
+.ac-vers-carte{background:var(--ac-noir);color:var(--ac-fond)}
+.ac-globe .bxl{background:var(--ac-etiq);color:var(--ac-noir);border-color:color-mix(in srgb,var(--ac-noir) 18%,transparent)}
+.ac-encore{position:absolute;left:0;right:0;bottom:22px;margin:0;text-align:center;font:500 11px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;opacity:.45}
+.ac-encore::after{content:"";display:block;width:1px;height:26px;margin:10px auto 0;background:currentColor;animation:ac-descend 1.8s var(--ac-ease) infinite}
+@keyframes ac-descend{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+/* les nuages : vers la carte, la page se couvre de nuages qui s'écartent sur la ville */
+.ac-nuages{position:fixed;inset:0;width:100%;height:100%;z-index:58;pointer-events:none;display:none}
+.ac-nuages.actif{display:block}

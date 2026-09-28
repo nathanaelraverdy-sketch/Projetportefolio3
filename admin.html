@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · Ville des projets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  
+  <link rel="stylesheet" href="/src/admin/admin.css">
+</head>
+<body>
+<div id="nojs" style="position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;background:#efe9dd;font:17px/1.55 -apple-system,system-ui,sans-serif;color:#1d2a2c;padding:24px">
+  <div style="max-width:560px;background:#fbf8f2;border:1px solid rgba(29,42,44,.13);border-radius:18px;padding:28px 30px">
+    <h2 style="margin:0 0 10px;font-size:22px">Cette page s’ouvre autrement</h2>
+    <p style="margin:0 0 12px">La page admin a besoin d’un petit serveur qui tourne sur l’ordinateur. Ouverte directement (double-clic sur le fichier, ou « ouvrir dans le navigateur » de WebStorm), elle reste vide.</p>
+    <p style="margin:0 0 6px"><b>Pour l’ouvrir :</b></p>
+    <ul style="margin:0;padding-left:20px"><li>double-clique sur <b>« Ouvrir l’admin.command »</b> dans le dossier du projet,</li><li>ou, dans WebStorm, ouvre le fichier <b>package.json</b> et clique sur le petit ▶ vert à côté de <b>« admin »</b> (ou de <b>« dev »</b> pour la ville).</li></ul>
+  </div>
+</div>
+<script>/* ouverte sans serveur (fichier direct, ou aperçu de WebStorm) : si le serveur du site tourne déjà, on y va tout seul ; sinon on explique comment faire */
+if (location.protocol === "file:" || location.port === "63342") {
+  document.getElementById("nojs").style.display = "flex";
+  [5180].forEach(function (port) {   // le port de CE projet uniquement (Projetcarte utilise 5173)
+    fetch("http://localhost:" + port + "/__admin/etat", { mode: "no-cors" }).then(function () { location.href = "http://localhost:" + port + "/admin.html"; }).catch(function () {});
+  });
+}</script>
+<header class="bar">
+  <div>
+    <h1>Mes <em>projets</em></h1>
+    <p class="hint">Tout se fait ici, sur ton ordinateur. Rien ne change en ligne tant que tu n’appuies pas sur « Mettre en ligne ».</p>
+  </div>
+  <div class="actions">
+    <a class="btn ghost" href="/" target="_blank" rel="noopener">Voir le site</a>
+    <button class="btn" id="save" type="button" disabled>Enregistrer</button>
+    <button class="btn dark" id="publish" type="button">Mettre en ligne</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <aside class="side">
+    <h2>Les projets <span id="count"></span></h2>
+    <ol class="list" id="list"></ol>
+    <button class="add" id="add" type="button">+ Nouveau projet</button>
+    <p class="small">L’ordre de la liste est l’ordre des fiches sur le site. Utilise les flèches pour le changer.</p>
+    <div class="ecrans-accueil">
+      <h2>Page d’accueil · les écrans</h2>
+      <p class="small">Ce qu’affichent l’iPhone et le Macintosh en 3D. Une image, ou une vidéo (avec son image, affichée pendant le chargement).</p>
+      <div class="ecran-slot" data-e="iphone"><b>iPhone</b><small>Format idéal : <strong>1206 × 2622 px</strong>, vertical. Vidéo : MP4 (H.264), 1080 × 2340 px, sans son, moins de 15 s et de 8 Mo.</small><div id="ecranIphone"></div></div>
+      <div class="ecran-slot" data-e="mac"><b>Macintosh</b><small>Format idéal : <strong>1024 × 768 px</strong> (4:3). Vidéo : MP4 (H.264), 1024 × 768 px, sans son, moins de 15 s et de 8 Mo.</small><div id="ecranMac"></div></div>
+      <p class="small">Si le format n’est pas celui-là, l’image n’est jamais déformée : on zoome dedans, en gardant le centre.</p>
+    </div>
+  </aside>
+
+  <section class="edit" id="edit">
+    <div class="empty" id="empty" hidden>
+      <p>Aucun projet pour l’instant.</p>
+      <button class="btn" type="button" id="add2">Créer mon premier projet</button>
+    </div>
+
+    <form id="form" autocomplete="off" hidden>
+      <div class="card">
+        <h3>1. Le projet</h3>
+        <label class="field"><span>Titre du projet</span>
+          <input id="f-name" required maxlength="40" placeholder="Par exemple : Trajectify">
+        </label>
+        <div class="row">
+          <label class="field"><span>Ton rôle</span>
+            <input id="f-role" maxlength="60" placeholder="Par exemple : Fondateur · app mobile">
+          </label>
+          <div class="field"><span>Étiquettes</span>
+            <div class="chips" id="tags"><input id="f-tag" placeholder="Ex. Webdesign, puis Entrée"></div>
+          </div>
+        </div>
+        <div class="row">
+          <label class="field"><span>Statut <small>(affiché en haut à gauche de l’image)</small></span>
+            <select id="f-statut"><option value="">Aucun</option><option value="In progress">In progress (en cours)</option><option value="Completed">Completed (terminé)</option><option value="On hold">On hold (en pause)</option><option value="Coming soon">Coming soon (bientôt)</option><option value="__autre">Autre… (en anglais)</option></select>
+            <input id="f-statut-autre" maxlength="24" placeholder="Ex. Beta, Prototype…" hidden>
+          </label>
+          <label class="field" id="prog-champ" hidden><span>Avancement (« Progress » sur le site) <b id="f-prog-val">50 %</b></span>
+            <input type="range" id="f-prog" min="0" max="100" step="5">
+          </label>
+        </div>
+        <label class="field"><span>Description <small id="desc-count"></small></span>
+          <textarea id="f-desc" rows="3" maxlength="280" placeholder="Une ou deux phrases pour dire ce que c’est."></textarea>
+        </label>
+        <div class="field"><span>Image / vidéo de la fiche <small>(s’il y a une vidéo, une image est obligatoire : elle s’affiche pendant le chargement)</small></span>
+          <div class="medias" id="cardMedia"></div>
+        </div>
+      </div>
+
+      <div class="card batiment">
+        <div class="bat-gauche">
+          <h3>2. Son emplacement</h3>
+          <div class="field"><span>Position sur la carte</span><select id="f-bat" hidden></select>
+            <small><b>Clique sur la carte</b> (à droite) à l’endroit où tu veux la pastille de ce projet ; reclique ailleurs pour la déplacer. Glisse pour te déplacer, molette pour zoomer.</small></div>
+          <div class="field"><span>Couleur</span><div class="swatches" id="swatches"></div></div>
+          <div class="field"><span>Icône du projet <small>(sur sa pastille)</small></span><div class="icones" id="icones"></div></div>
+        </div>
+        <div class="view">
+          <iframe id="vitrine" title="Aperçu des bâtiments"></iframe>
+          <div class="loading" id="vload">Chargement de l’aperçu…</div>
+          <div class="chosen" id="chosen">—</div>
+        </div>
+      </div>
+
+      <div class="globalite">
+        <h3>Projet dans sa globalité</h3>
+        <p class="small">Glisse un bloc par sa poignée ⠿ pour le déplacer. Approche-toi d’un coin du bas pour changer sa taille. Le bloc des outils garde toujours la même taille.</p>
+        <div class="g-actions">
+          <button type="button" class="btn ghost" id="addTexte">Ajouter un emplacement texte</button>
+          <button type="button" class="btn ghost" id="addMedia">Ajouter un emplacement image/vidéo</button>
+        </div>
+        <div class="g-grille" id="grille"></div>
+      </div>
+
+      <div class="danger">
+        <button type="button" class="link" id="del">Supprimer ce projet</button>
+        <span id="del-confirm" hidden>Vraiment supprimer ? <button type="button" class="link red" id="del-yes">Oui, supprimer</button> · <button type="button" class="link" id="del-no">Non</button></span>
+      </div>
+    </form>
+    <input type="file" id="filePick" hidden>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="/src/admin/admin.js"></script>
+</body>
+</html>

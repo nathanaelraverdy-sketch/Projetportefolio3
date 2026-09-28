@@ -1,0 +1,185 @@
+{
+  "image": [
+    4096,
+    2816
+  ],
+  "largeur_m": 1600.0,
+  "emplacements": [
+    {
+      "id": "tour",
+      "nom": "Tour de bureaux",
+      "uv": [
+        0.42486,
+        0.80045
+      ]
+    },
+    {
+      "id": "theatre",
+      "nom": "Théâtre",
+      "uv": [
+        0.3992,
+        0.65329
+      ]
+    },
+    {
+      "id": "cinema",
+      "nom": "Cinéma",
+      "uv": [
+        0.41246,
+        0.79624
+      ]
+    },
+    {
+      "id": "musee",
+      "nom": "Musée",
+      "uv": [
+        0.5382,
+        0.7378
+      ]
+    },
+    {
+      "id": "opera",
+      "nom": "Opéra",
+      "uv": [
+        0.61347,
+        0.66987
+      ]
+    },
+    {
+      "id": "bibliotheque",
+      "nom": "Bibliothèque",
+      "uv": [
+        0.56386,
+        0.84244
+      ]
+    },
+    {
+      "id": "hotel_de_ville",
+      "nom": "Hôtel de ville",
+      "uv": [
+        0.74006,
+        0.80158
+      ]
+    },
+    {
+      "id": "clinique",
+      "nom": "Clinique",
+      "uv": [
+        0.26021,
+        0.56183
+      ]
+    },
+    {
+      "id": "gymnase",
+      "nom": "Gymnase",
+      "uv": [
+        0.28587,
+        0.65952
+      ]
+    },
+    {
+      "id": "supermarche",
+      "nom": "Supermarché",
+      "uv": [
+        0.24866,
+        0.79222
+      ]
+    },
+    {
+      "id": "stade",
+      "nom": "Stade",
+      "uv": [
+        0.84777,
+        0.55154
+      ]
+    },
+    {
+      "id": "amphi",
+      "nom": "Amphithéâtre",
+      "uv": [
+        0.79253,
+        0.52646
+      ]
+    },
+    {
+      "id": "usine",
+      "nom": "Usine",
+      "uv": [
+        0.65651,
+        0.31696
+      ]
+    },
+    {
+      "id": "usine-2",
+      "nom": "Usine 2",
+      "uv": [
+        0.65699,
+        0.38804
+      ]
+    },
+    {
+      "id": "centrale",
+      "nom": "Centrale",
+      "uv": [
+        0.6989,
+        0.31155
+      ]
+    },
+    {
+      "id": "usine-3",
+      "nom": "Usine 3",
+      "uv": [
+        0.12887,
+        0.38053
+      ]
+    },
+    {
+      "id": "usine-4",
+      "nom": "Usine 4",
+      "uv": [
+        0.19629,
+        0.39897
+      ]
+    },
+    {
+      "id": "entrepot",
+      "nom": "Entrepôt",
+      "uv": [
+        0.86396,
+        0.28404
+      ]
+    },
+    {
+      "id": "entrepot-2",
+      "nom": "Entrepôt 2",
+      "uv": [
+        0.05933,
+        0.29969
+      ]
+    },
+    {
+      "id": "mairie",
+      "nom": "Mairie",
+      "uv": [
+        0.44826,
+        0.17943
+      ]
+    },
+    {
+      "id": "eglise",
+      "nom": "Église",
+      "uv": [
+        0.50811,
+        0.18952
+      ]
+    },
+    {
+      "id": "ecole",
+      "nom": "École",
+      "uv": [
+        0.39189,
+        0.11726
+      ]
+    }
+  ]
+}
