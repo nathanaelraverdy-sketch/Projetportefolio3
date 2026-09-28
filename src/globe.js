@@ -20,7 +20,7 @@ const ease = t => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 3);
 
 export async function creerGlobe(boite, etiquette, { petit = false, sombre = false } = {}) {
   const cv = document.createElement('canvas'); cv.className = 'globe-cv'; boite.prepend(cv);
-  const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, premultipliedAlpha: false });
+  const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });   // (alpha prémultiplié, par défaut : sinon le halo clair devient gris et opaque sur fond sombre)
   renderer.setPixelRatio(Math.min(devicePixelRatio, petit ? 1.5 : 2)); renderer.setClearColor(0xffffff, 0);
   const scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-1.3, 1.3, 1.3, -1.3, -10, 10);
   const terre = new THREE.Group(); scene.add(terre);
